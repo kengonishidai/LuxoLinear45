@@ -153,7 +153,39 @@ if selected_page == "🏠 ホーム / プローブ選択":
     if probename in probe_list:
         st.subheader("●超音波診断装置本体の設定項目")
 
+    try:
+    # ローカル環境
         from preset_data import setting_labels, preset_data
+    except ImportError:
+        # Streamlit Cloud環境
+        setting_labels = st.secrets["preset"]["setting_labels"].split(",")
+
+        # プローブ名の対応表（TOMLキー → 実際のプローブ名）
+        probe_key_map = {
+            "C5_2"  : "C5-2",
+            "S4_2"  : "S4-2",
+            "L18_4" : "L18-4",
+            "L14_4" : "L14-4",
+            "L11_3" : "L11-3",
+            "HL18_4": "HL18-4",
+            "EC9_3" : "EC9-3",
+            "MC10_3": "MC10-3",
+            "WL13_3": "WL13-3",
+            "S4_2A" : "S4-2A",
+            "X20L"  : "X20L",
+        }
+
+        preset_data = {"設定項目": setting_labels}
+        for key, probename_real in probe_key_map.items():
+            raw = st.secrets["preset"]["data"][key].split(",")
+            # 数値に変換できるものは変換する
+            converted = []
+            for v in raw:
+                try:
+                    converted.append(int(v))
+                except ValueError:
+                    converted.append(v)
+            preset_data[probename_real] = converted
 
         preset_df = pd.DataFrame(preset_data)[["設定項目", probename]]
         table_html = preset_df.to_html(index=False)
