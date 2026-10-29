@@ -3,6 +3,7 @@ opencv-python-headless
 numpy
 pandas
 plotly
-matplotlib
-japanize-matplotlib
 Pillow
+japanize-matplotlib
+matplotlib
+setuptools
